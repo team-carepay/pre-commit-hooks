@@ -1,0 +1,42 @@
+#!/usr/bin/env bash
+
+HOST=jira.atlassian.com
+AUTH=:
+BRANCHNAME="$(git rev-parse --abbrev-ref HEAD)"
+
+while [[ $# -gt 0 ]]; do
+case $1 in
+    -u|--auth) AUTH=$2; shift; shift ;;
+    -h|--host) HOST=$2; shift; shift ;;
+    *) shift ;;
+esac
+done
+
+if [[ ! -x "$(command -v jq)" && -x "$(command -v curl)" ]]; then
+  if [[ "$OSTYPE" == "linux-gnu" ]]; then
+    curl -s -o /usr/local/bin/jq -L https://github.com/stedolan/jq/releases/download/jq-1.6/jq-linux64
+    chmod +x /usr/local/bin/jq
+  elif [[ "$OSTYPE" == "darwin"* ]]; then
+    curl -s -o /usr/local/bin/jq -L https://github.com/stedolan/jq/releases/download/jq-1.6/jq-osx-amd64
+    chmod +x /usr/local/bin/jq
+  elif [[ "$OSTYPE" == "cygwin" || "$OSTYPE" == "msys" || "$OSTYPE" == "win32" ]]; then
+    curl -s -o /usr/local/bin/jq.exe -L https://github.com/stedolan/jq/releases/download/jq-1.6/jq-win64.exe
+    chmod +x /usr/local/bin/jq.exe
+  fi
+fi
+
+if [[ "$BRANCHNAME" =~ ^(bugfix|feature|hotfix|chore)/([A-Za-z0-9]+-[0-9]+) ]]; then
+  ISSUE=${BASH_REMATCH[2]}
+  STATUS=$(curl -s -u "$AUTH" https://$HOST/rest/api/latest/issue/$ISSUE\?fields\=status | jq -r .fields.status.statusCategory.name)
+  if [[ "$STATUS" =~ ^(In Progress|To Do)$ ]]; then
+    echo "Valid branch name $BRANCHNAME, status is $STATUS"
+  else
+    echo "JIRA issue $ISSUE has invalid status: $STATUS"
+    exit 1
+  fi
+elif [[ "$BRANCHNAME" =~ ^(master|HEAD)$ ]]; then
+  echo "Branch is $BRANCHNAME, skipping validation for master"
+else
+  echo "Invalid branch name $BRANCHNAME, should be: (bugfix|feature|hotfix|chore)/JIRA-issuenumber, e.g. bugfix/CLAIM-123-short-description"
+  exit 1
+fi

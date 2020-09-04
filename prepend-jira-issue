@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+BRANCHNAME="$(git rev-parse --abbrev-ref HEAD)"
+if [[ "$BRANCHNAME" =~ ^(bugfix|feature|hotfix|chore)/([A-Za-z0-9]+-[0-9]+) ]]; then
+  ISSUE=${BASH_REMATCH[2]}
+  grep -q "$ISSUE" $1 || echo "$ISSUE $(cat $1)" > $1
+fi

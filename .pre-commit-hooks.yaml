@@ -1,0 +1,18 @@
+- id: check-jira-issue
+  name: Validate branch name contains a JIRA key
+  description: Validate branch name contains a JIRA key; use --auth user:pass for JIRA credentials; use --host to specify JIRA server hostname
+  entry: check-jira-issue
+  language: script
+  pass_filenames: false
+- id: prepend-jira-issue
+  name: Prepend JIRA issue key
+  description: Prepends JIRA issue key to commit msg (if missing)
+  entry: prepend-jira-issue
+  language: script
+- id: checkstyle
+  name: Checkstyle
+  description: Checkstyle
+  entry: checkstyle
+  language: script
+  pass_filenames: true
+  files: [text]

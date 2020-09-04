@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+CONFIG=https://raw.githubusercontent.com/checkstyle/checkstyle/master/src/main/resources/sun_checks.xml
+
+case $1 in
+    -c|--config) CONFIG=$2; shift; shift ;;
+esac
+
+java -jar checkstyle-8.9-all.jar -c $CONFIG "$@"
