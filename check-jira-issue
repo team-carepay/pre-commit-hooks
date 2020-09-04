@@ -1,10 +1,5 @@
 #!/usr/bin/env bash
 
-set -o verbose
-echo $@
-echo $*
-echo $1 $2 $3 $4
-
 HOST=jira.atlassian.com
 AUTH=:
 BRANCHNAME="$(git rev-parse --abbrev-ref HEAD)"
