@@ -8,6 +8,7 @@
   description: Prepends JIRA issue key to commit msg (if missing)
   entry: prepend-jira-issue
   language: script
+  stages: [prepare-commit-msg]
 - id: checkstyle
   name: Checkstyle
   description: Checkstyle
