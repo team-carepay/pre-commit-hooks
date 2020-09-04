@@ -6,4 +6,4 @@ case $1 in
     -c|--config) CONFIG=$2; shift; shift ;;
 esac
 
-java -jar "$(dirname "$0")/checkstyle-8.9-all.jar" -c $CONFIG "$@"
+java -jar "$(dirname "$0")/checkstyle-8.36-all.jar" -c $CONFIG "$@"
