@@ -15,4 +15,4 @@
   entry: checkstyle
   language: script
   pass_filenames: true
-  files: [text]
+  types: [text]
