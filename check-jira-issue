@@ -1,5 +1,10 @@
 #!/usr/bin/env bash
 
+set -o verbose
+echo $@
+echo $*
+echo $1 $2 $3 $4
+
 HOST=jira.atlassian.com
 AUTH=:
 BRANCHNAME="$(git rev-parse --abbrev-ref HEAD)"
@@ -27,6 +32,8 @@ fi
 
 if [[ "$BRANCHNAME" =~ ^(bugfix|feature|hotfix|chore)/([A-Za-z0-9]+-[0-9]+) ]]; then
   ISSUE=${BASH_REMATCH[2]}
+  echo curl -s -u "$AUTH" https://$HOST/rest/api/latest/issue/$ISSUE\?fields\=status
+  curl -s -u "$AUTH" https://$HOST/rest/api/latest/issue/$ISSUE\?fields\=status
   STATUS=$(curl -s -u "$AUTH" https://$HOST/rest/api/latest/issue/$ISSUE\?fields\=status | jq -r .fields.status.statusCategory.name)
   if [[ "$STATUS" =~ ^(In Progress|To Do)$ ]]; then
     echo "Valid branch name $BRANCHNAME, status is $STATUS"
