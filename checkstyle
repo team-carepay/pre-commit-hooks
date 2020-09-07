@@ -1,3 +1,8 @@
 #!/usr/bin/env bash
 
-java -jar "$(dirname "$0")/checkstyle-8.36-all.jar" "$@"
+BASEDIR="$(dirname "$0")"
+if [[ ! -f "$BASEDIR/checkstyle.jar" ]]; then
+  curl -sL -o "$BASEDIR/checkstyle.jar" $(curl -s https://api.github.com/repos/checkstyle/checkstyle/releases/latest | jq -r '.assets[].browser_download_url')
+fi
+
+java -jar "$BASEDIR/checkstyle.jar" "$@"
