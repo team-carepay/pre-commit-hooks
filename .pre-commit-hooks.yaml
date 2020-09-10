@@ -4,7 +4,7 @@
   entry: check-jira-issue
   language: script
   stages:
-    - pre-commit
+    - commit
 - id: prepend-jira-issue
   name: Prepend JIRA issue key
   description: Prepends JIRA issue key to commit msg (if missing)
@@ -20,4 +20,4 @@
   pass_filenames: true
   types: [text]
   stages:
-    - pre-commit
+    - commit
