@@ -32,3 +32,12 @@ repos:
         args: [ --auth, user@host.com:ApiKeyGoesHere, --host, carepay.atlassian.net ]
       - id: prepend-jira-issue
 ```
+
+```uml
+@startuml
+title Authentication Sequence
+    Alice->Bob: Authentication Request
+    note right of Bob: Bob thinks about it
+    Bob->Alice: Authentication Response
+@enduml
+```
