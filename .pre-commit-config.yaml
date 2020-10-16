@@ -8,3 +8,8 @@ repos:
       - id: check-case-conflict
       - id: check-merge-conflict
       - id: check-executables-have-shebangs
+      - id: no-commit-to-branch
+        args: [--branch, master]
+      - id: detect-aws-credentials
+        args: ["--allow-missing-credentials"]
+      - id: detect-private-key
