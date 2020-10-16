@@ -13,7 +13,7 @@
   language: script
   always_run: true
   stages:
-    - commit
+    - commit-msg
 - id: checkstyle
   name: Checkstyle
   description: Checkstyle
