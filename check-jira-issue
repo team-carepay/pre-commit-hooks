@@ -1,16 +1,29 @@
 #!/usr/bin/env bash
 
 HOST=jira.atlassian.com
-AUTH=:
 BRANCHNAME="$(git rev-parse --abbrev-ref HEAD)"
 
 while [[ $# -gt 0 ]]; do
 case $1 in
-    -u|--auth) AUTH=$2; shift; shift ;;
-    -h|--host) HOST=$2; shift; shift ;;
+    --auth) JIRA_AUTH="$2"; shift; shift ;;
+    -p|--password) JIRA_USERNAME="$2"; shift; shift ;;
+    -u|--username) JIRA_API_TOKEN="$2"; shift; shift ;;
+    -h|--host) HOST="$2"; shift; shift ;;
     *) shift ;;
 esac
 done
+
+# Read JIRA API token from .gitconfig: section [user], key jira-api-token
+if [[ -z "$JIRA_USERNAME" ]]; then
+  JIRA_USERNAME=$(git config --get user.email)
+fi
+if [[ -z "$JIRA_API_TOKEN" ]]; then
+  JIRA_API_TOKEN=$(git config --get user.jira-api-token)
+fi
+
+if [[ -z "$JIRA_AUTH" && -n "$JIRA_USERNAME" && -n "$JIRA_API_TOKEN" ]]; then
+  JIRA_AUTH="$JIRA_USERNAME:$JIRA_API_TOKEN"
+fi
 
 if [[ ! -x "$(command -v jq)" && -x "$(command -v curl)" ]]; then
   if [[ "$OSTYPE" == "linux-gnu" ]]; then
@@ -27,18 +40,16 @@ fi
 
 if [[ "$BRANCHNAME" =~ ^(bugfix|feature|hotfix|chore)/([A-Za-z0-9]+-[0-9]+) ]]; then
   ISSUE=${BASH_REMATCH[2]}
-  echo curl -s -u "$AUTH" https://$HOST/rest/api/latest/issue/$ISSUE\?fields\=status
-  curl -s -u "$AUTH" https://$HOST/rest/api/latest/issue/$ISSUE\?fields\=status
-  STATUS=$(curl -s -u "$AUTH" https://$HOST/rest/api/latest/issue/$ISSUE\?fields\=status | jq -r .fields.status.statusCategory.name)
+  STATUS=$(curl -s -u "$JIRA_AUTH" https://$HOST/rest/api/latest/issue/$ISSUE\?fields\=status | jq -r .fields.status.statusCategory.name)
   if [[ "$STATUS" =~ ^(In Progress|To Do)$ ]]; then
     echo "Valid branch name $BRANCHNAME, status is $STATUS"
   else
-    echo "JIRA issue $ISSUE has invalid status: $STATUS"
+    echo "JIRA issue $ISSUE has invalid status: $STATUS" >&2
     exit 1
   fi
-elif [[ "$BRANCHNAME" =~ ^(master|HEAD)$ ]]; then
+elif [[ "$BRANCHNAME" =~ ^(master|main|HEAD)$ ]]; then
   echo "Branch is $BRANCHNAME, skipping validation for master"
 else
-  echo "Invalid branch name $BRANCHNAME, should be: (bugfix|feature|hotfix|chore)/JIRA-issuenumber, e.g. bugfix/CLAIM-123-short-description"
+  echo "Invalid branch name $BRANCHNAME, should be: (bugfix|feature|hotfix|chore)/JIRA-issuenumber, e.g. bugfix/CLAIM-123-short-description" >&2
   exit 1
 fi
