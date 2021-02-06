@@ -4,10 +4,21 @@
 This hook will verify if the current branch name refers to a valid issue in JIRA.
 This assumes a naming convention of feature/KEY-999-xxx-yyy-zzz
 
+We recommend to store username and JIRA API token in the global .gitconfig file:
+```
+[user]
+    email = user@host.com
+    jira-api-token = xxxxxxxxxxxx
+```
+
 Arguments:
-* -u / --auth
-  Used to specify credentials for private JIRA accounts. Specify with `user:password`
-* -h / --host
+* -u / --username (env: JIRA_USERNAME)
+  Username for JIRA (e.g. user@host.com). If not specified, the e-mail address in ~/.gitconfig will be used
+* -p / --password (env: JIRA_PASSWORD)
+  Password or API Token for JIRA. If not specified, the property 'jira-api-token' in ~/.gitconfig will be used
+* --auth (env: JIRA_AUTH)
+  (deprecated) Used to specify credentials for private JIRA accounts. Specify with `username:password`
+* -h / --host (env: JIRA_HOSTNAME)
   Used to specify JIRA hostname. Default is jira.atlassian.net
 
 ## checkstyle
@@ -31,13 +42,4 @@ repos:
       - id: check-jira-issue
         args: [ --auth, user@host.com:ApiKeyGoesHere, --host, carepay.atlassian.net ]
       - id: prepend-jira-issue
-```
-
-```uml
-@startuml
-title Authentication Sequence
-    Alice->Bob: Authentication Request
-    note right of Bob: Bob thinks about it
-    Bob->Alice: Authentication Response
-@enduml
 ```

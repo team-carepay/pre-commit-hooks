@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-HOST=jira.atlassian.com
+JIRA_HOSTNAME=jira.atlassian.com
 BRANCHNAME="$(git rev-parse --abbrev-ref HEAD)"
 
 while [[ $# -gt 0 ]]; do
@@ -8,7 +8,7 @@ case $1 in
     --auth) JIRA_AUTH="$2"; shift; shift ;;
     -p|--password) JIRA_USERNAME="$2"; shift; shift ;;
     -u|--username) JIRA_API_TOKEN="$2"; shift; shift ;;
-    -h|--host) HOST="$2"; shift; shift ;;
+    -h|--host) JIRA_HOSTNAME="$2"; shift; shift ;;
     *) shift ;;
 esac
 done
@@ -40,7 +40,7 @@ fi
 
 if [[ "$BRANCHNAME" =~ ^(bugfix|feature|hotfix|chore)/([A-Za-z0-9]+-[0-9]+) ]]; then
   ISSUE=${BASH_REMATCH[2]}
-  STATUS=$(curl -s -u "$JIRA_AUTH" https://$HOST/rest/api/latest/issue/$ISSUE\?fields\=status | jq -r .fields.status.statusCategory.name)
+  STATUS=$(curl -s -u "$JIRA_AUTH" https://$JIRA_HOSTNAME/rest/api/latest/issue/$ISSUE\?fields\=status | jq -r .fields.status.statusCategory.name)
   if [[ "$STATUS" =~ ^(In Progress|To Do)$ ]]; then
     echo "Valid branch name $BRANCHNAME, status is $STATUS"
   else
