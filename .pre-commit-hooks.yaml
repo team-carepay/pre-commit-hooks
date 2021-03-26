@@ -20,3 +20,10 @@
   language: script
   pass_filenames: true
   types: [text]
+- id: detekt
+  name: detekt
+  description: detekt
+  entry: detekt
+  language: script
+  pass_filenames: true
+  types: [text]

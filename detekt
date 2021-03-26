@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+BASEDIR="$(dirname "$0")"
+if [[ ! -f "$BASEDIR/detekt.jar" ]]; then
+  curl -sL -o "$BASEDIR/detekt.jar" $(curl -s https://api.github.com/repos/detekt/detekt/releases/latest | jq -r '.assets[].browser_download_url')
+fi
+
+java --add-opens java.base/java.util=ALL-UNNAMED -jar "$BASEDIR/detekt.jar" "$@"
