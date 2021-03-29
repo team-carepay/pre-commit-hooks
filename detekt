@@ -5,7 +5,7 @@ if [[ ! -f "$BASEDIR/detekt.jar" ]]; then
   curl -sL -o "$BASEDIR/detekt.jar" $(curl -s https://api.github.com/repos/detekt/detekt/releases/latest | jq -r '.assets[].browser_download_url')
 fi
 
-CONFIG=
+CONFIG="$BASEDIR/detekt.yml"
 
 POSITIONAL=()
 while [[ $# -gt 0 ]]
