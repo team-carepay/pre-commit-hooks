@@ -5,15 +5,27 @@ if [[ ! -f "$BASEDIR/detekt.jar" ]]; then
   curl -sL -o "$BASEDIR/detekt.jar" $(curl -s https://api.github.com/repos/detekt/detekt/releases/latest | jq -r '.assets[].browser_download_url')
 fi
 
-while getopts ":c:" opt; do
-  case $opt in
-    c) config="$OPTARG"
-    set -- "$@" "$opt"
+CONFIG=
+
+POSITIONAL=()
+while [[ $# -gt 0 ]]
+do
+  key="$1"
+
+  case $key in
+    -c|--config)
+    CONFIG="$2"
+    shift # past argument
+    shift # past value
+    ;;
+    *) # unknown option
+    POSITIONAL+=("$1") # save it in an array for later
+    shift
     ;;
   esac
 done
 
-shift $#
+set -- "${POSITIONAL[@]}" # restore positional parameters
 
 if [[ $config == http://* ]] | [[ $config == https://* ]]
 then
