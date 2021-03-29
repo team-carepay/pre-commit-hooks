@@ -25,5 +25,6 @@
   description: detekt
   entry: detekt
   language: script
-  pass_filenames: true
-  types: [text]
+  pass_filenames: false
+  files: \.kt$
+  require_serial: true

@@ -1,8 +1,38 @@
 #!/usr/bin/env bash
 
 BASEDIR="$(dirname "$0")"
+CHECKSTYLE_VERSION="8.41.1"
+
+POSITIONAL=()
+while [[ $# -gt 0 ]]
+do
+  key="$1"
+
+  case $key in
+    -v)
+    CHECKSTYLE_VERSION="$2"
+    shift # past argument
+    shift # past value
+    ;;
+    *) # unknown option
+    POSITIONAL+=("$1") # save it in an array for later
+    shift
+    ;;
+  esac
+done
+
+set -- "${POSITIONAL[@]}" # restore positional parameters
+
+printf "Using checkstyle version $CHECKSTYLE_VERSION\n"
+
 if [[ ! -f "$BASEDIR/checkstyle.jar" ]]; then
-  curl -sL -o "$BASEDIR/checkstyle.jar" $(curl -s https://api.github.com/repos/checkstyle/checkstyle/releases/latest | jq -r '.assets[].browser_download_url')
+  if [[ $CHECKSTYLE_VERSION == "latest" ]]; then
+    curl -sL -o "$BASEDIR/checkstyle.jar" $(curl -s https://api.github.com/repos/checkstyle/checkstyle/releases/latest | jq -r '.assets[]|select(.name | test("checkstyle.+\\.jar"))|.browser_download_url')
+  else
+    curl -sL -o "$BASEDIR/checkstyle.jar" "https://github.com/checkstyle/checkstyle/releases/download/checkstyle-$CHECKSTYLE_VERSION/checkstyle-${CHECKSTYLE_VERSION}-all.jar"
+  fi
 fi
 
-java -jar "$BASEDIR/checkstyle.jar" "$@"
+set -x
+java -jar "$BASEDIR/checkstyle.jar" --help
+set +x
