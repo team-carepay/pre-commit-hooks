@@ -34,7 +34,7 @@ This hook will run detekt on the changed files. Any arguments passed will to add
 Arguments (a complete list can be found [here](https://detekt.github.io/detekt/cli.html)):
 * `-c \<config-file>`
   Path to the config file (path/to/config.yml). Multiple configuration files can be specified with ',' or ';' as separator.
-* `-ex \<config-file>`
+* `-ex [**/*.kts]`
   Globing patterns describing paths to exclude from the analysis.
 
 
