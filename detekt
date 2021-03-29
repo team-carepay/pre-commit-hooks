@@ -1,0 +1,47 @@
+#!/usr/bin/env bash
+
+BASEDIR="$(dirname "$0")"
+DETEKT_VERSION="1.16.0"
+CONFIG="$BASEDIR/detekt.yml"
+
+POSITIONAL=()
+while [[ $# -gt 0 ]]
+do
+  key="$1"
+
+  case $key in
+    -v)
+    DETEKT_VERSION="$2"
+    shift # past argument
+    shift # past value
+    ;;
+    -c|--config)
+    CONFIG="$2"
+    shift # past argument
+    shift # past value
+    ;;
+    *) # unknown option
+    POSITIONAL+=("$1") # save it in an array for later
+    shift
+    ;;
+  esac
+done
+
+set -- "${POSITIONAL[@]}" # restore positional parameters
+
+printf "Using detekt version $DETEKT_VERSION\n"
+
+if [[ ! -f "$BASEDIR/detekt.jar" ]]; then
+  if [[ $DETEKT_VERSION == "latest" ]]; then
+    curl -sL -o "$BASEDIR/detekt.jar" $(curl -s https://api.github.com/repos/detekt/detekt/releases/latest | jq -r '.assets[]|select(.name | test("detekt-cli.+\\.jar"))|.browser_download_url')
+  else
+    curl -sL -o "$BASEDIR/detekt.jar" "https://github.com/detekt/detekt/releases/download/v$DETEKT_VERSION/detekt-cli-${DETEKT_VERSION}-all.jar"
+  fi
+fi
+
+if [[ $CONFIG == http://* ]] | [[ $CONFIG == https://* ]]
+then
+  curl -sL -o "$BASEDIR/detekt.yml" $CONFIG
+fi
+
+java --add-opens java.base/java.util=ALL-UNNAMED -jar "$BASEDIR/detekt.jar" -c "$BASEDIR/detekt.yml" "$@"
