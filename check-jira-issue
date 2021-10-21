@@ -14,14 +14,17 @@ esac
 done
 
 # Read JIRA API token from .gitconfig: section [user], key jira-api-token
-if [[ -z "$JIRA_USERNAME" ]]; then
-  JIRA_USERNAME=$(git config --get user.email)
-fi
-if [[ -z "$JIRA_API_TOKEN" ]]; then
-  JIRA_API_TOKEN=$(git config --get user.jira-api-token)
-fi
-
-if [[ -z "$JIRA_AUTH" && -n "$JIRA_USERNAME" && -n "$JIRA_API_TOKEN" ]]; then
+if [[ -z "$JIRA_AUTH" ]]; then
+  if [[ -z "$JIRA_USERNAME" ]]; then
+    JIRA_USERNAME=$(git config --get user.email)
+  fi
+  if [[ -z "$JIRA_API_TOKEN" ]]; then
+    JIRA_API_TOKEN=$(git config --get user.jira-api-token)
+  fi
+  if [[ -z "$JIRA_USERNAME" || -z "$JIRA_API_TOKEN" ]]; then
+    echo "Missing JIRA username or API token" >& 2
+    exit 1
+  fi
   JIRA_AUTH="$JIRA_USERNAME:$JIRA_API_TOKEN"
 fi
 
@@ -38,7 +41,7 @@ if [[ ! -x "$(command -v jq)" && -x "$(command -v curl)" ]]; then
   fi
 fi
 
-if [[ "$BRANCHNAME" =~ ^(bugfix|feature|hotfix|chore)/([A-Za-z0-9]+-[0-9]+) ]]; then
+if [[ "$BRANCHNAME" =~ ^(bugfix|feature|hotfix|chore|epic|subtask|release)/([A-Za-z0-9]+-[0-9]+) ]]; then
   ISSUE=${BASH_REMATCH[2]}
   STATUS=$(curl -s -u "$JIRA_AUTH" https://$JIRA_HOSTNAME/rest/api/latest/issue/$ISSUE\?fields\=status | jq -r .fields.status.statusCategory.name)
   if [[ "$STATUS" =~ ^(In Progress|To Do)$ ]]; then
@@ -50,6 +53,6 @@ if [[ "$BRANCHNAME" =~ ^(bugfix|feature|hotfix|chore)/([A-Za-z0-9]+-[0-9]+) ]]; 
 elif [[ "$BRANCHNAME" =~ ^(master|main|HEAD)$ ]]; then
   echo "Branch is $BRANCHNAME, skipping validation for master"
 else
-  echo "Invalid branch name $BRANCHNAME, should be: (bugfix|feature|hotfix|chore)/JIRA-issuenumber, e.g. bugfix/CLAIM-123-short-description" >&2
+  echo "Invalid branch name $BRANCHNAME, should be: (bugfix|feature|hotfix|chore|epic|subtask|release)/JIRA-issuenumber, e.g. bugfix/CLAIM-123-short-description" >&2
   exit 1
 fi
