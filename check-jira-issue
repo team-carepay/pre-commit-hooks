@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 
+PATH="/usr/local/bin:$PATH"
 JIRA_HOSTNAME=jira.atlassian.com
 BRANCHNAME="$(git rev-parse --abbrev-ref HEAD)"
 
