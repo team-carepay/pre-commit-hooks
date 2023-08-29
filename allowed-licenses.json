@@ -1,0 +1,29 @@
+{
+  "allowedLicenses": [
+    { "moduleLicense": "Apache License, Version 2.0" },
+    { "moduleLicense": "Apache-2.0" },
+
+    { "moduleLicense": "BSD Zero Clause License" },
+    { "moduleLicense": "The 2-Clause BSD License" },
+    { "moduleLicense": "The 3-Clause BSD License" },
+
+    { "moduleLicense": "Eclipse Distribution License - v 1.0" },
+    { "moduleLicense": "Eclipse Public License - v 1.0" },
+    { "moduleLicense": "Eclipse Public License - v 2.0" },
+
+    { "moduleLicense": "GNU LESSER GENERAL PUBLIC LICENSE, Version 2.1" },
+    { "moduleLicense": "LGPL-2.1" },
+    { "moduleLicense": "GNU Library General Public License v2.1 or later" },
+    { "moduleLicense": "GNU GENERAL PUBLIC LICENSE, Version 2 + Classpath Exception" },
+
+    { "moduleLicense": "MIT License" },
+
+    { "moduleLicense": "Bouncy Castle Licence" },
+
+    { "moduleLicense": "Creative Commons Legal Code" },
+
+    { "moduleLicense": "PUBLIC DOMAIN" },
+
+    { "moduleLicense": "The GNU General Public License, v2 with FOSS exception", "moduleName": "mysql:mysql-connector-java" }
+  ]
+}
