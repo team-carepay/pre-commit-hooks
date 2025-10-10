@@ -31,7 +31,7 @@
 - id: ktlint
   name: ktlint
   description: ktlint
-  entry: ktlint_script
+  entry: ktlint-script
   language: script
   pass_filenames: false
   files: \.kt$
