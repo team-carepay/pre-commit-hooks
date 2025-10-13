@@ -28,3 +28,11 @@
   pass_filenames: false
   files: \.kt$
   require_serial: true
+- id: ktlint
+  name: ktlint
+  description: ktlint
+  entry: ktlint-script
+  language: script
+  pass_filenames: true
+  files: \.kt$
+  require_serial: false

@@ -1,0 +1,6 @@
+root = true
+
+[*.{kt,kts}]
+indent_size = 2
+ktlint_code_style = ktlint_official
+ktlint_standard_no-unused-imports = enabled
