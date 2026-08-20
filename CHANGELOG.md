@@ -7,12 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+# [2.0.0] - 2026-08-20
+
+### Added
+
+- Add `append-jira-issue`, replacing `prepend-jira-issue`. It adds the branch's JIRA key to the commit message as a `Refs: CLAIM-123` footer instead of prepending it to the subject.
+
 ### Changed
 
 - **Breaking:** Adopt purpose prefixes for branch names: `feature/`, `feat/`, `bugfix/`, `fix/`, `hotfix/`, `release/`, `chore/`. `epic/` and `subtask/` are no longer accepted.
 - **Breaking:** Require the JIRA key in a branch name to be uppercase and to start with a letter — `feature/CLAIM-123-add-retry`, not `feature/claim-123-add-retry`.
 - Skip validation on `renovate/*` and `dependabot/*` branches instead of rejecting them. The bots name their own branches and there is no ticket to look up.
 - Skip validation on every `release/*` branch, whether or not it carries a key. Release branches are named after the version they prepare, so there is usually no ticket to look up.
+
+### Removed
+
+- **Breaking:** Remove the `prepend-jira-issue` hook and its id, replaced by `append-jira-issue`. Rename the id in your `.pre-commit-config.yaml`.
 
 ## [1.3.1] - 2022-01-31
 
@@ -54,7 +64,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add the `check-jira-issue`, `prepend-jira-issue` and `checkstyle` hooks
 
-[Unreleased]: https://github.com/team-carepay/pre-commit-hooks/compare/v1.3.1...HEAD
+[Unreleased]: https://github.com/team-carepay/pre-commit-hooks/compare/v2.0.0...HEAD
+[2.0.0]: https://github.com/team-carepay/pre-commit-hooks/compare/v1.3.1...v2.0.0
 [1.3.1]: https://github.com/team-carepay/pre-commit-hooks/compare/v1.3.0...v1.3.1
 [1.3.0]: https://github.com/team-carepay/pre-commit-hooks/compare/v1.2.0...v1.3.0
 [1.2.0]: https://github.com/team-carepay/pre-commit-hooks/compare/v1.1.0...v1.2.0

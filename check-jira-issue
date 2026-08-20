@@ -4,12 +4,12 @@ PATH="/usr/local/bin:$PATH"
 JIRA_HOSTNAME="${JIRA_HOSTNAME:-jira.atlassian.com}"
 BRANCHNAME="$(git rev-parse --abbrev-ref HEAD)"
 
-# NOTE: keep BRANCH_PURPOSE_PREFIXES in sync with the copy in `prepend-jira-issue`.
+# NOTE: keep BRANCH_PURPOSE_PREFIXES in sync with the copy in `append-jira-issue`.
 BRANCH_PURPOSE_PREFIXES='feature|feat|bugfix|fix|hotfix|release|chore'
 # Bots name their own branches and have no JIRA ticket, so they are skipped rather than rejected.
 BOT_PREFIXES='renovate|dependabot'
 TRUNK_BRANCHES='master|main|HEAD'
-# Uppercase only: prepend-jira-issue copies the key into the commit subject
+# Uppercase only: append-jira-issue copies the key into the commit message
 JIRA_KEY='[A-Z][A-Z0-9]*-[0-9]+'
 
 while [[ $# -gt 0 ]]; do

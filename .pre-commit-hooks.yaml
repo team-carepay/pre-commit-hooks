@@ -5,10 +5,10 @@
   language: script
   pass_filenames: false
   always_run: true
-- id: prepend-jira-issue
-  name: Prepend JIRA issue key
-  description: Prepends JIRA issue key to commit msg (if missing)
-  entry: prepend-jira-issue
+- id: append-jira-issue
+  name: Append JIRA issue key
+  description: Appends the branch's JIRA issue key to the commit msg as a `Refs:` footer (if not already referenced)
+  entry: append-jira-issue
   language: script
   always_run: true
   stages:

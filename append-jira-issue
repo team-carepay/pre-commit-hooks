@@ -1,0 +1,47 @@
+#!/usr/bin/env bash
+
+# Appends the branch's JIRA key to the commit message as a Conventional Commits
+# footer (https://www.conventionalcommits.org/en/v1.0.0/#specification), e.g.
+#
+#   docs: adjust ci.md
+#
+#   Refs: FOUND-7403
+#
+# The subject is never touched. Putting the key in front of it would displace the
+# conventional-commit type, and GitHub prefills the pull request title from the
+# commit subject on single-commit PRs.
+
+# NOTE: keep BRANCH_PURPOSE_PREFIXES in sync with the copy in `check-jira-issue`.
+BRANCH_PURPOSE_PREFIXES='feature|feat|bugfix|fix|hotfix|release|chore'
+# Uppercase only, matching check-jira-issue: JIRA links a commit by the uppercase
+# key, and the key is copied from the branch name verbatim.
+JIRA_KEY='[A-Z][A-Z0-9]*-[0-9]+'
+
+MSGFILE="$1"
+BRANCHNAME="$(git symbolic-ref --short -q HEAD || echo HEAD)"
+
+# release/ carries a version rather than a ticket, so check-jira-issue skips it.
+[[ "$BRANCHNAME" =~ ^release/ ]] && exit 0
+
+[[ "$BRANCHNAME" =~ ^($BRANCH_PURPOSE_PREFIXES)/($JIRA_KEY) ]] || exit 0
+ISSUE="${BASH_REMATCH[2]}"
+
+# git writes these subjects itself.
+if [[ "$(head -1 "$MSGFILE")" =~ ^(Merge|Revert|fixup!|squash!|amend!) ]]; then
+  exit 0
+fi
+
+# Already referenced? Then there is nothing to add - this keeps an inline
+# reference such as `fix(FOUND-7403): ...` from being duplicated in a footer.
+# Comment lines are excluded because the message still carries git's own
+# "# On branch feature/FOUND-7403-..." block at this point, which would
+# otherwise always match and make the hook do nothing.
+if grep -v '^#' "$MSGFILE" | grep -qwF -- "$ISSUE"; then
+  exit 0
+fi
+
+# interpret-trailers inserts the footer into an existing trailer block, and
+# places it before the comment block and before a `-v` scissors line so it
+# survives git's cleanup.
+git interpret-trailers --if-exists addIfDifferent \
+  --trailer "Refs: $ISSUE" --in-place "$MSGFILE"
