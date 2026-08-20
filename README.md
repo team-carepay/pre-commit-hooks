@@ -2,7 +2,28 @@
 
 ## check-jira-issue
 This hook will verify if the current branch name refers to a valid issue in JIRA.
-This assumes a naming convention of feature/KEY-999-xxx-yyy-zzz.
+This assumes a naming convention of `feature/KEY-999-short-description`.
+
+### Branch prefixes
+
+| Prefix | Purpose |
+| --- | --- |
+| `feature/`, `feat/` | New features |
+| `bugfix/`, `fix/` | Bug fixes |
+| `hotfix/` | Urgent fixes |
+| `release/` | Branches preparing a release |
+| `chore/` | Everything else: dependencies, docs, build, CI, tests, refactors |
+
+The JIRA key must be uppercase: `feature/CLAIM-123-short-description`. JIRA only
+links a commit to an issue when the key appears in its uppercase form, and
+`prepend-jira-issue` copies the key from the branch name verbatim.
+
+Exceptions:
+* `master`, `main` and a detached `HEAD` skip validation.
+* `renovate/*` and `dependabot/*` skip validation. The bots name their own branches and there is no ticket to look up.
+* Every `release/*` branch skips validation, whether or not it carries a key.
+  Release branches are named after the version they prepare (`release/v1.2.0`),
+  so there is usually no ticket to look up.
 
 We recommend to store username and JIRA API token in the global `.gitconfig` file:
 ```
@@ -39,7 +60,10 @@ Arguments (a complete list can be found [here](https://detekt.github.io/detekt/c
 
 
 ## prepend-jira-issue
-Script used in `prepare-commit-msg` phase.  If the current commit msg does not contain a reference to a JIRA issue, it will prepend the JIRA issue reference. Uses the branch name to detectmine the key.
+Script used in the `commit-msg` phase. If the commit message does not already
+reference a JIRA issue, the key is taken from the branch name and prepended to
+the subject: `fix: add retry` becomes `CLAIM-123 fix: add retry`. Accepts the
+same prefixes as [check-jira-issue](#branch-prefixes).
 
 Example `.pre-commit-config.yaml`:
 ```

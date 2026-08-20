@@ -4,6 +4,14 @@ PATH="/usr/local/bin:$PATH"
 JIRA_HOSTNAME=jira.atlassian.com
 BRANCHNAME="$(git rev-parse --abbrev-ref HEAD)"
 
+# NOTE: keep BRANCH_PURPOSE_PREFIXES in sync with the copy in `prepend-jira-issue`.
+BRANCH_PURPOSE_PREFIXES='feature|feat|bugfix|fix|hotfix|release|chore'
+# Bots name their own branches and have no JIRA ticket, so they are skipped rather than rejected.
+BOT_PREFIXES='renovate|dependabot'
+TRUNK_BRANCHES='master|main|HEAD'
+# Uppercase only: prepend-jira-issue copies the key into the commit subject
+JIRA_KEY='[A-Z][A-Z0-9]*-[0-9]+'
+
 while [[ $# -gt 0 ]]; do
 case $1 in
     --auth) JIRA_AUTH="$2"; shift; shift ;;
@@ -13,6 +21,32 @@ case $1 in
     *) shift ;;
 esac
 done
+
+check_jira_status() {
+  local issue="$1" status
+  status=$(curl -s -u "$JIRA_AUTH" https://$JIRA_HOSTNAME/rest/api/latest/issue/$issue\?fields\=status | jq -r .fields.status.statusCategory.name)
+  if [[ "$status" =~ ^(In Progress|To Do)$ ]]; then
+    echo "Valid branch name $BRANCHNAME, status is $status"
+  else
+    echo "JIRA issue $issue has invalid status: $status" >&2
+    exit 1
+  fi
+}
+
+if [[ "$BRANCHNAME" =~ ^($TRUNK_BRANCHES)$ ]]; then
+  echo "Branch is $BRANCHNAME, skipping validation for trunk"
+  exit 0
+fi
+
+if [[ "$BRANCHNAME" =~ ^($BOT_PREFIXES)/ ]]; then
+  echo "Branch $BRANCHNAME is bot-generated, skipping validation"
+  exit 0
+fi
+
+if [[ "$BRANCHNAME" =~ ^release/ ]]; then
+  echo "Branch $BRANCHNAME is a release branch, skipping validation"
+  exit 0
+fi
 
 # Read JIRA API token from .gitconfig: section [user], key jira-api-token
 if [[ -z "$JIRA_AUTH" ]]; then
@@ -42,18 +76,10 @@ if [[ ! -x "$(command -v jq)" && -x "$(command -v curl)" ]]; then
   fi
 fi
 
-if [[ "$BRANCHNAME" =~ ^(bugfix|feature|hotfix|chore|epic|subtask|release)/([A-Za-z0-9]+-[0-9]+) ]]; then
+if [[ "$BRANCHNAME" =~ ^($BRANCH_PURPOSE_PREFIXES)/($JIRA_KEY) ]]; then
   ISSUE=${BASH_REMATCH[2]}
-  STATUS=$(curl -s -u "$JIRA_AUTH" https://$JIRA_HOSTNAME/rest/api/latest/issue/$ISSUE\?fields\=status | jq -r .fields.status.statusCategory.name)
-  if [[ "$STATUS" =~ ^(In Progress|To Do)$ ]]; then
-    echo "Valid branch name $BRANCHNAME, status is $STATUS"
-  else
-    echo "JIRA issue $ISSUE has invalid status: $STATUS" >&2
-    exit 1
-  fi
-elif [[ "$BRANCHNAME" =~ ^(master|main|HEAD)$ ]]; then
-  echo "Branch is $BRANCHNAME, skipping validation for master"
+  check_jira_status "$ISSUE"
 else
-  echo "Invalid branch name $BRANCHNAME, should be: (bugfix|feature|hotfix|chore|epic|subtask|release)/JIRA-issuenumber, e.g. bugfix/CLAIM-123-short-description" >&2
+  echo "Invalid branch name $BRANCHNAME, should be: ($BRANCH_PURPOSE_PREFIXES)/KEY-123-short-description with an uppercase JIRA key, e.g. bugfix/CLAIM-123-fix-header" >&2
   exit 1
 fi

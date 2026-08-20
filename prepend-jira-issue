@@ -1,7 +1,13 @@
 #!/usr/bin/env bash
 
+# NOTE: keep BRANCH_PURPOSE_PREFIXES in sync with the copy in `check-jira-issue`.
+BRANCH_PURPOSE_PREFIXES='feature|feat|bugfix|fix|hotfix|release|chore'
+# Uppercase only, matching check-jira-issue
+JIRA_KEY='[A-Z][A-Z0-9]*-[0-9]+'
+
 BRANCHNAME="$(git rev-parse --abbrev-ref HEAD)"
-if [[ "$BRANCHNAME" =~ ^(bugfix|feature|hotfix|chore|epic|subtask|release)/([A-Za-z0-9]+-[0-9]+) ]]; then
+
+if [[ "$BRANCHNAME" =~ ^($BRANCH_PURPOSE_PREFIXES)/($JIRA_KEY) ]]; then
   ISSUE=${BASH_REMATCH[2]}
   grep -q "$ISSUE" $1 || echo "$ISSUE $(cat $1)" > $1
 fi
