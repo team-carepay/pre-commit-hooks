@@ -116,7 +116,7 @@ default_install_hook_types: [pre-commit, commit-msg]
 
 repos:
   - repo: git@github.com:team-carepay/pre-commit-hooks
-    rev: v1.3.1
+    rev: v2.0.0
     hooks:
       - id: checkstyle
         args: [ -c, https://carepaydev.bitbucket.io/checkstyle-1.1.xml ]
