@@ -47,8 +47,7 @@ Arguments (a flag beats the environment variable, which beats the default):
   Used to specify JIRA hostname. Default is `jira.atlassian.com`
 
 ## checkstyle
-Downloads the checkstyle jar next to the hook scripts. Receives the changed
-filenames, and is intended to check them. Any arguments passed will to added to the checkstyle commandline.
+Downloads the checkstyle jar next to the hook scripts. Receives the changed filenames, and is intended to check them. Any arguments passed will be added to the checkstyle command line.
 
 Arguments:
 * `-c \<config-file>`
