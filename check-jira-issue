@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 PATH="/usr/local/bin:$PATH"
-JIRA_HOSTNAME=jira.atlassian.com
+JIRA_HOSTNAME="${JIRA_HOSTNAME:-jira.atlassian.com}"
 BRANCHNAME="$(git rev-parse --abbrev-ref HEAD)"
 
 # NOTE: keep BRANCH_PURPOSE_PREFIXES in sync with the copy in `prepend-jira-issue`.

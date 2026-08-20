@@ -1,5 +1,8 @@
 # pre-commit-hooks
 
+Shared [pre-commit](https://pre-commit.com/) hooks for CarePay repositories.
+See [CHANGELOG.md](CHANGELOG.md) for what changed between revisions.
+
 ## check-jira-issue
 This hook will verify if the current branch name refers to a valid issue in JIRA.
 This assumes a naming convention of `feature/KEY-999-short-description`.
@@ -32,25 +35,27 @@ We recommend to store username and JIRA API token in the global `.gitconfig` fil
     jira-api-token = xxxxxxxxxxxx
 ```
 
-Arguments:
+Arguments (a flag beats the environment variable, which beats the default):
 * `-u / --username` `(env: JIRA_USERNAME)`
   Username for JIRA (e.g. user@host.com). If not specified, the e-mail address in `~/.gitconfig` will be used
-* `-p / --password` `(env: JIRA_PASSWORD)`
+* `-p / --password` `(env: JIRA_API_TOKEN)`
   Password or API Token for JIRA. If not specified, the property `jira-api-token` in `~/.gitconfig` will be used
-* `--auth (env: JIRA_AUTH)`
-  (deprecated) Used to specify credentials for private JIRA accounts. Specify with `username:password`
+* `--auth` `(env: JIRA_AUTH)`
+  (deprecated) Used to specify credentials for private JIRA accounts. Specify with `username:password`.
+  Prefer `~/.gitconfig` — passing this in `.pre-commit-config.yaml` commits your API token to the repository
 * `-h / --host` `(env: JIRA_HOSTNAME)`
-  Used to specify JIRA hostname. Default is `jira.atlassian.net`
+  Used to specify JIRA hostname. Default is `jira.atlassian.com`
 
 ## checkstyle
-This hook will run checkstyle on the changed files. Any arguments passed will to added to the checkstyle commandline.
+Downloads the checkstyle jar next to the hook scripts. Receives the changed
+filenames, and is intended to check them. Any arguments passed will to added to the checkstyle commandline.
 
 Arguments:
 * `-c \<config-file>`
-  Used to specify the location of the config file.
+  Intended to specify the location of the config file.
 
 ## detekt
-This hook will run detekt on the changed files. Any arguments passed will to added to the detekt commandline.
+Downloads the detekt CLI and runs it over the project's Kotlin sources. Any arguments other than the ones below are added to the detekt commandline.
 
 Arguments (a complete list can be found [here](https://detekt.github.io/detekt/cli.html)):
 * `-c \<config-file>`
@@ -69,11 +74,11 @@ Example `.pre-commit-config.yaml`:
 ```
 repos:
   - repo: git@github.com:team-carepay/pre-commit-hooks
-    rev: v1.0.8
+    rev: v1.3.1
     hooks:
       - id: checkstyle
         args: [ -c, https://carepaydev.bitbucket.io/checkstyle-1.1.xml ]
       - id: check-jira-issue
-        args: [ --auth, user@host.com:ApiKeyGoesHere, --host, carepay.atlassian.net ]
+        args: [ --host, carepay.atlassian.net ]
       - id: prepend-jira-issue
 ```
