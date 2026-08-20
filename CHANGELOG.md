@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- **Breaking:** Adopt purpose prefixes for branch names: `feature/`, `feat/`, `bugfix/`, `fix/`, `hotfix/`, `release/`, `chore/`. `epic/` and `subtask/` are no longer accepted. `docs/`, `test/`, `ci/`, `refactor/`, `perf/` and `build/` are valid *commit* types but not branch prefixes; that work goes under `chore/`. Rename any branch on a dropped prefix before committing.
+- **Breaking:** Adopt purpose prefixes for branch names: `feature/`, `feat/`, `bugfix/`, `fix/`, `hotfix/`, `release/`, `chore/`. `epic/` and `subtask/` are no longer accepted.
 - **Breaking:** Require the JIRA key in a branch name to be uppercase and to start with a letter — `feature/CLAIM-123-add-retry`, not `feature/claim-123-add-retry`.
 - Skip validation on `renovate/*` and `dependabot/*` branches instead of rejecting them. The bots name their own branches and there is no ticket to look up.
 - Skip validation on every `release/*` branch, whether or not it carries a key. Release branches are named after the version they prepare, so there is usually no ticket to look up.
