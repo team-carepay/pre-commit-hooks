@@ -7,7 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-# [2.0.0] - 2026-08-20
+### Changed
+
+- Bump the upstream `pre-commit/pre-commit-hooks` rev this repo uses to lint itself from `v2.5.0` to `v3.4.0`
+
+### Fixed
+
+- Fix this repo's own `.pre-commit-config.yaml`, which referred to the upstream hooks repository over `git://`. GitHub disabled that protocol in January 2022, so the clone hung and none of the nine configured hooks ran for contributors
+- Add the missing final newline to `.editorconfig`, the first thing the restored `end-of-file-fixer` hook caught
+
+## [2.0.0] - 2026-08-20
 
 ### Added
 
