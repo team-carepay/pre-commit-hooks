@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Bump the upstream `pre-commit/pre-commit-hooks` rev this repo lints itself with from `v2.5.0` to `v3.4.0`
+- Bump the upstream `pre-commit/pre-commit-hooks` rev this repo uses to lint itself from `v2.5.0` to `v3.4.0`
 
 ### Fixed
 
